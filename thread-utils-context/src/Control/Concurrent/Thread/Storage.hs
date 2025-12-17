@@ -98,7 +98,7 @@ atomicModifyStripe (ThreadStorageMap arr#) tid f = IO $ \s -> go s
         let (updatedIntMap, result) = f intMap 
         in case casArray# arr# stripe# intMap updatedIntMap s1 of
              (# s2, outcome, old #) -> case outcome of
-               0# -> (# s2, result #)
+               0# -> updatedIntMap `seq` (# s2, result #)
                1# -> go s2
                _ -> error "Got impossible result in atomicModifyStripe"
           
